@@ -38,8 +38,8 @@ def test_anthropic_token_count_allows_with_permission():
         assert "requires explicit permission" not in str(e)
 
 
-def test_tool_usage_stats_respects_network_permission():
-    """Test that ToolUsageStats passes network permission correctly."""
+def test_tool_usage_stats_blocks_tiktoken_without_model_downloads():
+    """Test that ToolUsageStats blocks TikToken when model downloads disabled."""
     # Test with TikToken and model downloads disabled - this should raise an error
     # if TikToken models aren't already cached
     with pytest.raises(ValueError) as exc_info:
@@ -49,8 +49,10 @@ def test_tool_usage_stats_respects_network_permission():
             allow_model_downloads=False
         )
     assert "not found locally and network access is disabled" in str(exc_info.value)
-    
-    # Test that trying to use Anthropic without permission fails at estimator level
+
+
+def test_anthropic_estimator_blocks_without_permission():
+    """Test that Anthropic estimator blocks without explicit permission."""
     with pytest.raises(ValueError) as exc_info:
         RegisteredTokenCountEstimator.ANTHROPIC_CLAUDE_SONNET_4.load_estimator(allow_network_access=False)
     
