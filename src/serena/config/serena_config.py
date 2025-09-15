@@ -350,6 +350,24 @@ class SerenaConfig(ToolInclusionDefinition, ToStringMixin):
     on the first run, which can take some time and require internet access. Others, like the Anthropic ones, may require an API key
     and rate limits may apply.
     """
+    allow_network_token_counting: bool = False
+    """
+    ⚠️  SECURITY WARNING: Allow token counting that sends code to external APIs (like Anthropic).
+    When False, only offline token counting is allowed. Only enable if you trust the external service 
+    and your organization's policies allow sending code to external servers.
+    """
+    allow_language_server_downloads: bool = False
+    """
+    ⚠️  SECURITY WARNING: Allow language servers to download external dependencies.
+    When False, language servers that require external downloads will fail to initialize.
+    Only enable if you trust the language server sources and your network environment is secure.
+    """
+    allow_model_downloads: bool = True
+    """
+    Allow downloading tokenizer models (like TikToken models) for offline token counting.
+    These downloads don't send your code to external servers, but require network access.
+    Set to False in highly restricted environments where no network access is allowed.
+    """
     default_max_tool_answer_chars: int = 150_000
     """Used as default for tools where the apply method has a default maximal answer length.
     Even though the value of the max_answer_chars can be changed when calling the tool, it may make sense to adjust this default 

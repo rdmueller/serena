@@ -71,6 +71,30 @@ token_count_estimator: TIKTOKEN_GPT4O
 # on the first run, which can take some time and require internet access. Others, like the Anthropic ones, may require an API key
 # and rate limits may apply.
 
+# SECURITY SETTINGS
+# These settings control external network access to protect your source code privacy.
+# See SECURITY.md for detailed explanations and recommendations.
+
+allow_network_token_counting: False
+# ⚠️ SECURITY WARNING: Allow token counting that sends code to external APIs (like Anthropic).
+# When False, only offline token counting is allowed. Only enable if you trust the external service
+# and your organization's policies allow sending code to external servers.
+# This must be explicitly set to True to use ANTHROPIC_CLAUDE_SONNET_4 token estimator.
+
+allow_language_server_downloads: False  
+# ⚠️ SECURITY WARNING: Allow language servers to download external dependencies.
+# When False, language servers that require external downloads will fail to initialize.
+# Only enable if you trust the language server sources and your network environment is secure.
+# Common sources: GitHub releases, Visual Studio Marketplace, JetBrains, Gradle distribution.
+# 
+# For development environments, you may want to set this to True:
+# allow_language_server_downloads: True
+
+allow_model_downloads: True
+# Allow downloading tokenizer models (like TikToken models) for offline token counting.
+# These downloads don't send your code to external servers, but require network access.
+# Set to False in highly restricted environments where no network access is allowed.
+
 
 # MANAGED BY SERENA, KEEP AT THE BOTTOM OF THE YAML AND DON'T EDIT WITHOUT NEED
 # The list of registered projects.
