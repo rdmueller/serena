@@ -274,6 +274,12 @@ class LanguageServerConfig:
     start_independent_lsp_process: bool = True
     ignored_paths: list[str] = field(default_factory=list)
     """Paths, dirs or glob-like patterns. The matching will follow the same logic as for .gitignore entries"""
+    allow_external_downloads: bool = False
+    """
+    Allow language servers to download external dependencies (binaries, extensions, etc.).
+    ⚠️  SECURITY WARNING: When enabled, language servers may download files from external URLs.
+    Only enable this if you trust the language server sources and your network environment is secure.
+    """
 
     @classmethod
     def from_dict(cls, env: dict):

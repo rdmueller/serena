@@ -180,10 +180,24 @@ class FileUtils:
             raise SolidLSPException("File read failed.") from None
 
     @staticmethod
-    def download_file(logger: LanguageServerLogger, url: str, target_path: str) -> None:
+    def download_file(logger: LanguageServerLogger, url: str, target_path: str, allow_network_access: bool = False) -> None:
         """
         Downloads the file from the given URL to the given {target_path}
+        
+        :param allow_network_access: If False, raises an error to prevent accidental downloads
         """
+        if not allow_network_access:
+            logger.log(
+                f"⚠️  SECURITY: Attempted to download file from external URL: {url}. "
+                "This has been blocked for security. Set allow_network_access=True to enable external downloads.",
+                logging.WARNING
+            )
+            raise SolidLSPException(
+                f"External download blocked for security. URL: {url}. "
+                "To enable external downloads, set allow_network_access=True in your configuration."
+            )
+            
+        logger.log(f"Downloading file from external URL: {url}", logging.INFO)
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
         try:
             response = requests.get(url, stream=True, timeout=60)
@@ -197,16 +211,35 @@ class FileUtils:
             raise SolidLSPException("Error downloading file.") from None
 
     @staticmethod
-    def download_and_extract_archive(logger: LanguageServerLogger, url: str, target_path: str, archive_type: str) -> None:
+    def download_and_extract_archive(
+        logger: LanguageServerLogger, 
+        url: str, 
+        target_path: str, 
+        archive_type: str, 
+        allow_network_access: bool = False
+    ) -> None:
         """
         Downloads the archive from the given URL having format {archive_type} and extracts it to the given {target_path}
+        
+        :param allow_network_access: If False, raises an error to prevent accidental downloads
         """
+        if not allow_network_access:
+            logger.log(
+                f"⚠️  SECURITY: Attempted to download and extract archive from external URL: {url}. "
+                "This has been blocked for security. Set allow_network_access=True to enable external downloads.",
+                logging.WARNING
+            )
+            raise SolidLSPException(
+                f"External download blocked for security. URL: {url}. "
+                "To enable external downloads, set allow_network_access=True in your configuration."
+            )
+            
         try:
             tmp_files = []
             tmp_file_name = str(PurePath(os.path.expanduser("~"), "multilspy_tmp", uuid.uuid4().hex))
             tmp_files.append(tmp_file_name)
             os.makedirs(os.path.dirname(tmp_file_name), exist_ok=True)
-            FileUtils.download_file(logger, url, tmp_file_name)
+            FileUtils.download_file(logger, url, tmp_file_name, allow_network_access=True)  # Already checked above
             if archive_type in ["tar", "gztar", "bztar", "xztar"]:
                 os.makedirs(target_path, exist_ok=True)
                 shutil.unpack_archive(tmp_file_name, target_path, archive_type)

@@ -254,6 +254,7 @@ class EclipseJDTLS(SolidLanguageServer):
                 runtime_dependencies["gradle"]["platform-agnostic"]["url"],
                 str(PurePath(gradle_path).parent),
                 runtime_dependencies["gradle"]["platform-agnostic"]["archiveType"],
+                allow_network_access=config.allow_external_downloads,
             )
 
         assert os.path.exists(gradle_path)
@@ -276,7 +277,13 @@ class EclipseJDTLS(SolidLanguageServer):
                 os.path.exists(jdtls_readonly_config_path),
             ]
         ):
-            FileUtils.download_and_extract_archive(logger, dependency["url"], vscode_java_path, dependency["archiveType"])
+            FileUtils.download_and_extract_archive(
+                logger, 
+                dependency["url"], 
+                vscode_java_path, 
+                dependency["archiveType"], 
+                allow_network_access=config.allow_external_downloads
+            )
 
         os.chmod(jre_path, 0o755)
 
@@ -299,7 +306,13 @@ class EclipseJDTLS(SolidLanguageServer):
                 os.path.exists(intellisense_members_path),
             ]
         ):
-            FileUtils.download_and_extract_archive(logger, dependency["url"], intellicode_directory_path, dependency["archiveType"])
+            FileUtils.download_and_extract_archive(
+                logger, 
+                dependency["url"], 
+                intellicode_directory_path, 
+                dependency["archiveType"], 
+                allow_network_access=config.allow_external_downloads
+            )
 
         assert os.path.exists(intellicode_directory_path)
         assert os.path.exists(intellicode_jar_path)
